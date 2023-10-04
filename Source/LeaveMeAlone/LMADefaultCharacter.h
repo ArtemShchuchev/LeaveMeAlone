@@ -1,4 +1,4 @@
-// LeaveMeAlone Game by Netologiya. All Rights Reserved.
+п»ї// LeaveMeAlone Game by Netologiya. All Rights Reserved.
 
 #pragma once
 
@@ -6,11 +6,11 @@
 #include "GameFramework/Character.h"
 #include "LMADefaultCharacter.generated.h"
 
-// будет отвечать за компонент камеры
+// Р±СѓРґРµС‚ РѕС‚РІРµС‡Р°С‚СЊ Р·Р° РєРѕРјРїРѕРЅРµРЅС‚ РєР°РјРµСЂС‹
 class UCameraComponent;
 /*
-	используется для автоматического управления поведением камеры в
-	ситуациях, когда она становится закрытой
+	РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРіРѕ СѓРїСЂР°РІР»РµРЅРёСЏ РїРѕРІРµРґРµРЅРёРµРј РєР°РјРµСЂС‹ РІ
+	СЃРёС‚СѓР°С†РёСЏС…, РєРѕРіРґР° РѕРЅР° СЃС‚Р°РЅРѕРІРёС‚СЃСЏ Р·Р°РєСЂС‹С‚РѕР№
 */
 class USpringArmComponent;
 
@@ -50,12 +50,12 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	float YRotation = -75.0f;	// отвечает за поворот камеры по оси Y.
-	float ArmLength = 1400.0f;	// отвечает за длину штатива.
-	float FOV = 55.0f;			// отвечает за поле зрения камеры.
+	float YRotation = -75.0f;	// РѕС‚РІРµС‡Р°РµС‚ Р·Р° РїРѕРІРѕСЂРѕС‚ РєР°РјРµСЂС‹ РїРѕ РѕСЃРё Y.
+	float ArmLength = 1400.0f;	// РѕС‚РІРµС‡Р°РµС‚ Р·Р° РґР»РёРЅСѓ С€С‚Р°С‚РёРІР°.
+	float FOV = 55.0f;			// РѕС‚РІРµС‡Р°РµС‚ Р·Р° РїРѕР»Рµ Р·СЂРµРЅРёСЏ РєР°РјРµСЂС‹.
 
-	void MoveForward(float Value);	// движение персонажа по оси X
-	void MoveRight(float Value);	// движение персонажа по оси Y
+	void MoveForward(float Value);	// РґРІРёР¶РµРЅРёРµ РїРµСЂСЃРѕРЅР°Р¶Р° РїРѕ РѕСЃРё X
+	void MoveRight(float Value);	// РґРІРёР¶РµРЅРёРµ РїРµСЂСЃРѕРЅР°Р¶Р° РїРѕ РѕСЃРё Y
 
 	float zoomMin = 500.0f;
 	float zoomMax = 1500.0f;

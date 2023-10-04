@@ -1,4 +1,4 @@
-// LeaveMeAlone Game by Netologiya. All Rights Reserved.
+п»ї// LeaveMeAlone Game by Netologiya. All Rights Reserved.
 
 
 #include "LMADefaultCharacter.h"
@@ -18,16 +18,16 @@ ALMADefaultCharacter::ALMADefaultCharacter()
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
 	SpringArmComponent->SetupAttachment(GetRootComponent());
 	/*
-		данное условие не позволит нашей камере поворачиваться
-		в момент поворота персонажа.В жанре Top - Down Shooter,
-		камера обычно находится статично над игроком.
+		РґР°РЅРЅРѕРµ СѓСЃР»РѕРІРёРµ РЅРµ РїРѕР·РІРѕР»РёС‚ РЅР°С€РµР№ РєР°РјРµСЂРµ РїРѕРІРѕСЂР°С‡РёРІР°С‚СЊСЃВ¤
+		РІ РјРѕРјРµРЅС‚ РїРѕРІРѕСЂРѕС‚Р° РїРµСЂСЃРѕРЅР°Р¶Р°. Р’ Р¶Р°РЅСЂРµ Top - Down Shooter,
+		РєР°РјРµСЂР° РѕР±С‹С‡РЅРѕ РЅР°С…РѕРґРёС‚СЃВ¤ СЃС‚Р°С‚РёС‡РЅРѕ РЅР°Рґ РёРіСЂРѕРєРѕРј.
 	*/
 	SpringArmComponent->SetUsingAbsoluteRotation(true);
 	SpringArmComponent->TargetArmLength = ArmLength;
 	/*
-		структура FRotator хранит аргументы в следующей последовательности:
+		СЃС‚СЂСѓРєС‚СѓСЂР° FRotator С…СЂР°РЅРёС‚ Р°СЂРіСѓРјРµРЅС‚С‹ РІ СЃР»РµРґСѓСЋС‰РµР№ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё:
 		Pitch, Yaw, Roll.
-		Так как нам необходимо определить значения по оси Y, мы устанавливаем Pitch аргумент.
+		РўР°Рє РєР°Рє РЅР°Рј РЅРµРѕР±С…РѕРґРёРјРѕ РѕРїСЂРµРґРµР»РёС‚СЊ Р·РЅР°С‡РµРЅРёВ¤ РїРѕ РѕСЃРё Y, РјС‹ СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј Pitch Р°СЂРіСѓРјРµРЅС‚.
 	*/
 	SpringArmComponent->SetRelativeRotation(FRotator(YRotation, 0.0f, 0.0f));
 	SpringArmComponent->bDoCollisionTest = false;
@@ -36,10 +36,10 @@ ALMADefaultCharacter::ALMADefaultCharacter()
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	CameraComponent->SetupAttachment(SpringArmComponent);
 	CameraComponent->SetFieldOfView(FOV);
-	// данное условие запрещаем камере вращаться относительно SpringArmComponent.
+	// РґР°РЅРЅРѕРµ СѓСЃР»РѕРІРёРµ Р·Р°РїСЂРµС‰Р°РµРј РєР°РјРµСЂРµ РІСЂР°С‰Р°С‚СЊСЃСЏ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ SpringArmComponent.
 	CameraComponent->bUsePawnControlRotation = false;
 
-	// запретим нашему персонажу поворачиваться в сторону камеры
+	// Р·Р°РїСЂРµС‚РёРј РЅР°С€РµРјСѓ РїРµСЂСЃРѕРЅР°Р¶Сѓ РїРѕРІРѕСЂР°С‡РёРІР°С‚СЊСЃСЏ РІ СЃС‚РѕСЂРѕРЅСѓ РєР°РјРµСЂС‹
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
@@ -81,11 +81,11 @@ void ALMADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	/*
-		Для корректного бинда на созданные нами функции используется функция BindAxis,
-		которая в качестве первого аргумента принимает названия события, которое мы
-		объявляли в Project Settings > Engine > Input.
-		Второй аргумент – это объект в котором будет вызвано событие.
-		Третий – это ссылка на функцию, которая вызывается при получении данных с клавиатуры.
+		Р”Р»СЏ РєРѕСЂСЂРµРєС‚РЅРѕРіРѕ Р±РёРЅРґР° РЅР° СЃРѕР·РґР°РЅРЅС‹Рµ РЅР°РјРё С„СѓРЅРєС†РёРё РёСЃРїРѕР»СЊР·СѓРµС‚СЃВ¤ С„СѓРЅРєС†РёВ¤ BindAxis,
+		РєРѕС‚РѕСЂР°В¤ РІ РєР°С‡РµСЃС‚РІРµ РїРµСЂРІРѕРіРѕ Р°СЂРіСѓРјРµРЅС‚Р° РїСЂРёРЅРёРјР°РµС‚ РЅР°Р·РІР°РЅРёВ¤ СЃРѕР±С‹С‚РёВ¤, РєРѕС‚РѕСЂРѕРµ РјС‹
+		РѕР±СЉВ¤РІР»В¤Р»Рё РІ Project Settings > Engine > Input.
+		Р’С‚РѕСЂРѕР№ Р°СЂРіСѓРјРµРЅС‚ - СЌС‚Рѕ РѕР±СЉРµРєС‚ РІ РєРѕС‚РѕСЂРѕРј Р±СѓРґРµС‚ РІС‹Р·РІР°РЅРѕ СЃРѕР±С‹С‚РёРµ.
+		РўСЂРµС‚РёР№ - СЌС‚Рѕ СЃСЃС‹Р»РєР° РЅР° С„СѓРЅРєС†РёСЋ, РєРѕС‚РѕСЂР°СЏ РІС‹Р·С‹РІР°РµС‚СЃВ¤ РїСЂРё РїРѕР»СѓС‡РµРЅРёРё РґР°РЅРЅС‹С… СЃ РєР»Р°РІРёР°С‚СѓСЂС‹.
 	*/
 	PlayerInputComponent->BindAxis("MoveForward", this, &ALMADefaultCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ALMADefaultCharacter::MoveRight);
@@ -105,6 +105,6 @@ void ALMADefaultCharacter::MoveRight(float Value)
 
 void ALMADefaultCharacter::CameraZoom(const float value)
 {
-	// Сделал на blueprint, что тут писать - не знаю.(
+	// вЂ”РґРµР»Р°Р» РЅР° blueprint, С‡С‚Рѕ С‚СѓС‚ РїРёСЃР°С‚СЊ - РЅРµ Р·РЅР°СЋ.(
 }
 

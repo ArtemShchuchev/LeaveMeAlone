@@ -1,4 +1,4 @@
-// LeaveMeAlone Game by Netologiya. All Rights Reserved.
+﻿// LeaveMeAlone Game by Netologiya. All Rights Reserved.
 
 
 #include "LMAPlayerController.h"
