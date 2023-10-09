@@ -56,8 +56,4 @@ private:
 
 	void MoveForward(float Value);	// движение персонажа по оси X
 	void MoveRight(float Value);	// движение персонажа по оси Y
-
-	float zoomMin = 500.0f;
-	float zoomMax = 1500.0f;
-	void CameraZoom(const float value);
 };

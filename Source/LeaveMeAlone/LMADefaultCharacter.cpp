@@ -89,8 +89,6 @@ void ALMADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	*/
 	PlayerInputComponent->BindAxis("MoveForward", this, &ALMADefaultCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ALMADefaultCharacter::MoveRight);
-
-	PlayerInputComponent->BindAxis("CameraZoom", this, &ALMADefaultCharacter::CameraZoom);
 }
 
 void ALMADefaultCharacter::MoveForward(float Value)
@@ -102,9 +100,3 @@ void ALMADefaultCharacter::MoveRight(float Value)
 {
 	AddMovementInput(GetActorRightVector(), Value);
 }
-
-void ALMADefaultCharacter::CameraZoom(const float value)
-{
-	// —делал на blueprint, что тут писать - не знаю.(
-}
-
