@@ -13,6 +13,8 @@ class UCameraComponent;
 	ситуациях, когда она становится закрытой
 */
 class USpringArmComponent;
+class ULMAHealthComponent;	// здоровье
+class UAnimMontage;	// класс анимационного монтажа
 
 UCLASS()
 class LEAVEMEALONE_API ALMADefaultCharacter : public ACharacter
@@ -22,6 +24,9 @@ class LEAVEMEALONE_API ALMADefaultCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ALMADefaultCharacter();
+	
+	UFUNCTION()
+	ULMAHealthComponent* GetHealthComponent() const { return HealthComponent; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -29,6 +34,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UCameraComponent* CameraComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components|Health")
+	ULMAHealthComponent* HealthComponent;
 
 	UPROPERTY()
 	UDecalComponent* CurrentCursor = nullptr;
@@ -38,6 +46,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cursor")
 	FVector CursorSize = FVector(20.0f, 40.0f, 40.0f);
+	
+	UPROPERTY(EditDefaultsOnly, Category="Animation")
+	UAnimMontage* DeathMontage;	// указатель на анимацию
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -56,4 +67,9 @@ private:
 
 	void MoveForward(float Value);	// движение персонажа по оси X
 	void MoveRight(float Value);	// движение персонажа по оси Y
+	
+	void OnDeath();
+	void OnHealthChanged(float NewHealth);
+
+	void RotationPlayerOnCursor();
 };

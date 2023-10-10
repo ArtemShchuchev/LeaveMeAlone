@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "LMAHealthComponent.generated.h"
 
+// Декларируем делегат оповещающий о смерти
+DECLARE_MULTICAST_DELEGATE(FOnDeath)
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LEAVEMEALONE_API ULMAHealthComponent : public UActorComponent
@@ -15,14 +18,38 @@ class LEAVEMEALONE_API ULMAHealthComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	ULMAHealthComponent();
+	
+	UFUNCTION(BlueprintCallable)
+	float GetHealth() const { return Health; }
+	
+	// функцию, которая будет оповещать клиентов о смерти
+	UFUNCTION(BlueprintCallable)
+	bool IsDead() const;
+	
+	bool AddHealth(float NewHealth);
+	bool IsHealthFull() const;
+
+	
+	FOnDeath OnDeath;	// объявляю делегат
+	FOnHealthChanged OnHealthChanged;
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float MaxHealth = 100.0f;	// макс. здоровье
+	
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+/*
+// Можно убрать за не надобностью
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+*/
 
-		
+private:
+	float Health = 0.0f;	// здоровье персонажа
+
+	UFUNCTION()
+	void OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 };
