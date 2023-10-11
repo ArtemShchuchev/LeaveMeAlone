@@ -11,8 +11,12 @@
 #include "Components/LMAHealthComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "EngineGlobals.h"
+#include "Engine.h"
+#include "Widgets/Layout/SBox.h"
+
 // Sets default values
-ALMADefaultCharacter::ALMADefaultCharacter() : stamina(STAMINA_MAX)
+ALMADefaultCharacter::ALMADefaultCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -61,11 +65,11 @@ void ALMADefaultCharacter::BeginPlay()
 		CurrentCursor = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), CursorMaterial, CursorSize, FVector(0));
 	}
 	
-	OnHealthChanged(HealthComponent->GetHealth());
+	//OnHealthChanged(HealthComponent->GetHealth());
 	HealthComponent->OnDeath.AddUObject(this, &ALMADefaultCharacter::OnDeath);
-	HealthComponent->OnHealthChanged.AddUObject(this, &ALMADefaultCharacter::OnHealthChanged);
+	//HealthComponent->OnHealthChanged.AddUObject(this, &ALMADefaultCharacter::OnHealthChanged);
 	
-	OnStaminaChanged();
+	//OnStaminaChanged();
 }
 
 // Called every frame
@@ -151,11 +155,12 @@ void ALMADefaultCharacter::OnDeath()
 		GetWorld()->GetTimerManager().ClearTimer(FTimerHandleStamina);
 	}
 }
-
+/*
 void ALMADefaultCharacter::OnHealthChanged(float NewHealth)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Health = %f"), NewHealth), true, {2, 2});
 }
+*/
 
 void ALMADefaultCharacter::pushSprint()
 {
@@ -192,7 +197,7 @@ void ALMADefaultCharacter::countDownStamina()
 		sprintingStop();
 	}
 
-	OnStaminaChanged();
+	//OnStaminaChanged();
 }
 
 void ALMADefaultCharacter::countUpStamina()
@@ -206,13 +211,14 @@ void ALMADefaultCharacter::countUpStamina()
 		GetWorld()->GetTimerManager().ClearTimer(FTimerHandleStamina);
 	}
 
-	OnStaminaChanged();
+	//OnStaminaChanged();
 }
-
+/*
 void ALMADefaultCharacter::OnStaminaChanged()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Blue, FString::Printf(TEXT("Stamina = %f"), stamina), true, {2, 2});
 }
+*/
 
 void ALMADefaultCharacter::RotationPlayerOnCursor()
 {

@@ -73,7 +73,6 @@ private:
 	/* Спринт и Выносливость */
 	bool pressSprintBtn = false;
 	const float STAMINA_MAX = 100.0f;
-	float stamina;					// выносливость
 	FTimerHandle FTimerHandleStamina;
 	UCharacterMovementComponent* CharacterMovement;
 
@@ -82,14 +81,19 @@ private:
 	void releaseSprint();
 	void countDownStamina();
 	void countUpStamina();
-	void OnStaminaChanged();		// отображение выносливости
+	//void OnStaminaChanged();		// отображение выносливости
 	/* End: Спринт и Выносливость */
 
 	void MoveForward(float Value);	// движение персонажа по оси X
 	void MoveRight(float Value);	// движение персонажа по оси Y
 	
 	void OnDeath();
-	void OnHealthChanged(float NewHealth);
+	//void OnHealthChanged(float NewHealth);
 
 	void RotationPlayerOnCursor();
+
+protected:
+	// выносливость
+	UPROPERTY(BlueprintReadOnly)
+	float stamina = STAMINA_MAX;
 };
