@@ -47,13 +47,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Cursor")
 	FVector CursorSize = FVector(20.0f, 40.0f, 40.0f);
 	
+	// указатель на анимацию
 	UPROPERTY(EditDefaultsOnly, Category="Animation")
-	UAnimMontage* DeathMontage;	// указатель на анимацию
-
-	/*
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character Movement: Walking")
-	float MaxWalkSpeed = 400.0f;	// макс. скорость перса
-	*/
+	UAnimMontage* DeathMontage;
 	
 	// флаг бега с ускорением
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Sprinting")
