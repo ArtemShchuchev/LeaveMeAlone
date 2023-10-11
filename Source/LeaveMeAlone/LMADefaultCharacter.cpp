@@ -145,7 +145,11 @@ void ALMADefaultCharacter::OnDeath()
 		Controller->ChangeState(NAME_Spectating);
 	}
 
-	GetWorld()->GetTimerManager().ClearTimer(FTimerHandleStamina);
+	if (FTimerHandleStamina.IsValid())
+	{
+		bIsSprinting = false;
+		GetWorld()->GetTimerManager().ClearTimer(FTimerHandleStamina);
+	}
 }
 
 void ALMADefaultCharacter::OnHealthChanged(float NewHealth)
