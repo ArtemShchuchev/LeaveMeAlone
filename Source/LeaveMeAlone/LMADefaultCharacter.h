@@ -50,6 +50,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Animation")
 	UAnimMontage* DeathMontage;	// указатель на анимацию
 
+	/*
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character Movement: Walking")
+	float MaxWalkSpeed = 400.0f;	// макс. скорость перса
+	*/
+	
+	// флаг бега с ускорением
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Sprinting")
+	bool bIsSprinting = false;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -61,9 +70,24 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	float YRotation = -75.0f;	// отвечает за поворот камеры по оси Y.
-	float ArmLength = 1400.0f;	// отвечает за длину штатива.
-	float FOV = 55.0f;			// отвечает за поле зрения камеры.
+	float YRotation = -75.0f;		// отвечает за поворот камеры по оси Y.
+	float ArmLength = 1400.0f;		// отвечает за длину штатива.
+	float FOV = 55.0f;				// отвечает за поле зрения камеры.
+	
+	/* Спринт и Выносливость */
+	bool pressSprintBtn = false;
+	const float STAMINA_MAX = 100.0f;
+	float stamina;					// выносливость
+	FTimerHandle FTimerHandleStamina;
+	UCharacterMovementComponent* CharacterMovement;
+
+	void sprintingStop();
+	void pushSprint();
+	void releaseSprint();
+	void countDownStamina();
+	void countUpStamina();
+	void OnStaminaChanged();		// отображение выносливости
+	/* End: Спринт и Выносливость */
 
 	void MoveForward(float Value);	// движение персонажа по оси X
 	void MoveRight(float Value);	// движение персонажа по оси Y

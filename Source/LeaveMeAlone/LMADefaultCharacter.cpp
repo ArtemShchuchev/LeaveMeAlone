@@ -12,7 +12,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
-ALMADefaultCharacter::ALMADefaultCharacter()
+ALMADefaultCharacter::ALMADefaultCharacter() : stamina(STAMINA_MAX)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -47,6 +47,8 @@ ALMADefaultCharacter::ALMADefaultCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+
+	CharacterMovement = GetCharacterMovement();
 }
 
 // Called when the game starts or when spawned
@@ -62,6 +64,8 @@ void ALMADefaultCharacter::BeginPlay()
 	OnHealthChanged(HealthComponent->GetHealth());
 	HealthComponent->OnDeath.AddUObject(this, &ALMADefaultCharacter::OnDeath);
 	HealthComponent->OnHealthChanged.AddUObject(this, &ALMADefaultCharacter::OnHealthChanged);
+	
+	OnStaminaChanged();
 }
 
 // Called every frame
@@ -72,6 +76,28 @@ void ALMADefaultCharacter::Tick(float DeltaTime)
 	if (!(HealthComponent->IsDead()))
 	{
 		RotationPlayerOnCursor();
+	}
+
+	if (pressSprintBtn)
+	{
+		if (GetVelocity().IsZero())
+		{
+			sprintingStop();
+		}
+		else
+		{
+			if (bIsSprinting == false && !FMath::IsNearlyZero(stamina))
+			{
+				bIsSprinting = true;
+				CharacterMovement->MaxWalkSpeed *= 2;	// MaxWalkSpeed
+
+				GetWorld()->GetTimerManager().SetTimer(FTimerHandleStamina, // handle to cancel timer at a later time
+					this,													// the owning object
+					&ALMADefaultCharacter::countDownStamina,				// function to call on elapsed
+					0.05,													// float delay until elapsed
+					true);													// looping?
+			}
+		}
 	}
 }
 
@@ -89,6 +115,9 @@ void ALMADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	*/
 	PlayerInputComponent->BindAxis("MoveForward", this, &ALMADefaultCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ALMADefaultCharacter::MoveRight);
+	
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ALMADefaultCharacter::pushSprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ALMADefaultCharacter::releaseSprint);
 }
 
 void ALMADefaultCharacter::MoveForward(float Value)
@@ -115,11 +144,70 @@ void ALMADefaultCharacter::OnDeath()
 	{
 		Controller->ChangeState(NAME_Spectating);
 	}
+
+	GetWorld()->GetTimerManager().ClearTimer(FTimerHandleStamina);
 }
 
 void ALMADefaultCharacter::OnHealthChanged(float NewHealth)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Health = %f"), NewHealth), true, {2, 2});
+}
+
+void ALMADefaultCharacter::pushSprint()
+{
+	pressSprintBtn = true;
+}
+
+void ALMADefaultCharacter::releaseSprint()
+{
+	pressSprintBtn = false;
+	sprintingStop();
+}
+
+void ALMADefaultCharacter::sprintingStop()
+{
+	if (bIsSprinting && !FMath::IsNearlyEqual(stamina, STAMINA_MAX))
+	{
+		bIsSprinting = false;
+		CharacterMovement->MaxWalkSpeed /= 2;	// MaxWalkSpeed
+
+		GetWorld()->GetTimerManager().SetTimer(FTimerHandleStamina, // handle to cancel timer at a later time
+			this,													// the owning object
+			&ALMADefaultCharacter::countUpStamina,					// function to call on elapsed
+			0.05,													// float delay until elapsed
+			true);													// looping?
+	}
+}
+
+void ALMADefaultCharacter::countDownStamina()
+{
+	stamina = FMath::Clamp(stamina - 1.0f, 0.0f, STAMINA_MAX);
+
+	if (FMath::IsNearlyZero(stamina))
+	{
+		sprintingStop();
+	}
+
+	OnStaminaChanged();
+}
+
+void ALMADefaultCharacter::countUpStamina()
+{
+	float restVelocity = (GetVelocity().IsZero()) ? 0.7f : 0.2f;
+
+	stamina += restVelocity;
+	if ( !(stamina < STAMINA_MAX) )
+	{
+		stamina = STAMINA_MAX;
+		GetWorld()->GetTimerManager().ClearTimer(FTimerHandleStamina);
+	}
+
+	OnStaminaChanged();
+}
+
+void ALMADefaultCharacter::OnStaminaChanged()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Blue, FString::Printf(TEXT("Stamina = %f"), stamina), true, {2, 2});
 }
 
 void ALMADefaultCharacter::RotationPlayerOnCursor()
