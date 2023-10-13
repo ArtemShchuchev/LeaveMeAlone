@@ -31,6 +31,7 @@ public:
 	ALMABaseWeapon();
 
 	void Fire();
+	void FireEnd();
 	void ChangeClip();
 
 protected:
@@ -56,4 +57,5 @@ public:
 
 private:
 	FAmmoWeapon CurrentAmmoWeapon;
+	FTimerHandle FTimerHandleFire;
 };

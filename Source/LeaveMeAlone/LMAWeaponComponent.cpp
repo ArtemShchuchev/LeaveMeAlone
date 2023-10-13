@@ -1,6 +1,5 @@
 // LeaveMeAlone Game by Netologiya. All RightsReserved.
 
-
 #include "LMAWeaponComponent.h"
 #include "GameFramework/Character.h"
 #include "LMABaseWeapon.h"
@@ -8,21 +7,22 @@
 #include "LMADefaultCharacter.h"
 
 // Sets default values for this component's properties
-ULMAWeaponComponent::ULMAWeaponComponent()
+ULMAWeaponComponent::ULMAWeaponComponent() : fireIsPressed(false)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 void ULMAWeaponComponent::Fire()
 {
-	if (Weapon && !AnimReloading)
-	{
-		Weapon->Fire();
-	}
+	fireIsPressed = true;
+}
+
+void ULMAWeaponComponent::FireEnd()
+{
+	fireIsPressed = false;
+	Weapon->FireEnd();
 }
 
 void ULMAWeaponComponent::Reload()
@@ -53,6 +53,18 @@ void ULMAWeaponComponent::BeginPlay()
 void ULMAWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (fireIsPressed)
+	{
+		if (Weapon && !AnimReloading)
+		{
+			Weapon->Fire();
+		}
+		else
+		{
+			Weapon->FireEnd();
+		}
+	}
 }
 
 void ULMAWeaponComponent::SpawnWeapon()

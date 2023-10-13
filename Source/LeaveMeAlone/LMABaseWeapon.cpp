@@ -1,6 +1,5 @@
 // LeaveMeAlone Game by Netologiya. All RightsReserved.
 
-
 #include "LMABaseWeapon.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeapon, All, All);
@@ -17,7 +16,19 @@ ALMABaseWeapon::ALMABaseWeapon() : CurrentAmmoWeapon(AmmoWeapon)
 
 void ALMABaseWeapon::Fire()
 {
-	Shoot();
+	GetWorld()->GetTimerManager().SetTimer(FTimerHandleFire, // handle to cancel timer at a later time
+		this,												 // the owning object
+		&ALMABaseWeapon::Shoot,								 // function to call on elapsed
+		0.2,												 // float delay until elapsed
+		true);												 // looping?
+}
+
+void ALMABaseWeapon::FireEnd()
+{
+	if (FTimerHandleFire.IsValid())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(FTimerHandleFire);
+	}
 }
 
 void ALMABaseWeapon::ChangeClip()

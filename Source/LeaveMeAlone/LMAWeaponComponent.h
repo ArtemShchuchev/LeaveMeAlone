@@ -20,6 +20,7 @@ public:
 	ULMAWeaponComponent();
 
 	void Fire();
+	void FireEnd();
 	void Reload();
 
 protected:
@@ -40,6 +41,7 @@ private:
 	UPROPERTY()
 	ALMABaseWeapon* Weapon = nullptr;
 	bool AnimReloading = false;
+	bool fireIsPressed;
 
 	void SpawnWeapon();
 	void InitAnimNotify();
