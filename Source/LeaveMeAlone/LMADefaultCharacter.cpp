@@ -10,10 +10,11 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/LMAHealthComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "LMAWeaponComponent.h"
 
-#include "EngineGlobals.h"
+//#include "EngineGlobals.h"
 #include "Engine.h"
-#include "Widgets/Layout/SBox.h"
+//#include "Widgets/Layout/SBox.h"
 
 // Sets default values
 ALMADefaultCharacter::ALMADefaultCharacter()
@@ -44,6 +45,8 @@ ALMADefaultCharacter::ALMADefaultCharacter()
 	CameraComponent->SetFieldOfView(FOV);
 	// данное условие запрещаем камере вращаться относительно SpringArmComponent.
 	CameraComponent->bUsePawnControlRotation = false;
+
+	WeaponComponent = CreateDefaultSubobject<ULMAWeaponComponent>("Weapon");
 	
 	HealthComponent = CreateDefaultSubobject<ULMAHealthComponent>("HealthComponent");
 
@@ -122,6 +125,8 @@ void ALMADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	
 	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ALMADefaultCharacter::pushSprint);
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ALMADefaultCharacter::releaseSprint);
+
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &ULMAWeaponComponent::Fire);
 }
 
 void ALMADefaultCharacter::MoveForward(float Value)
