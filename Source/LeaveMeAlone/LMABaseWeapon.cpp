@@ -6,7 +6,7 @@
 DEFINE_LOG_CATEGORY_STATIC(LogWeapon, All, All);
 
 // Sets default values
-ALMABaseWeapon::ALMABaseWeapon()
+ALMABaseWeapon::ALMABaseWeapon() : CurrentAmmoWeapon(AmmoWeapon)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -38,15 +38,23 @@ void ALMABaseWeapon::Shoot()
 	const FVector TraceStart = SocketTransform.GetLocation();
 	const FVector ShootDirection = SocketTransform.GetRotation().GetForwardVector();
 	const FVector TraceEnd = TraceStart + ShootDirection * TraceDistance;
-	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 0.2f, 0, 2.0f);
+	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 0.1f, 0, 2.0f);
 
 	FHitResult HitResult;
 	GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility);
 
 	if (HitResult.bBlockingHit)
 	{
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 1.0f);
+		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 0.5f);
 	}
+	/*
+		Кроме того, в рамках домашнего задания, которое
+		вас ожидает, необходимо будет дополнить
+		функцию Shoot дополнительным условием выхода
+		из функции, в том случае, если патроны закончатся
+		в процессе стрельбы.
+	*/
+	DecrementBullets();
 }
 
 void ALMABaseWeapon::DecrementBullets()
