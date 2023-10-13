@@ -11,10 +11,7 @@
 #include "Components/LMAHealthComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "LMAWeaponComponent.h"
-
-//#include "EngineGlobals.h"
 #include "Engine.h"
-//#include "Widgets/Layout/SBox.h"
 
 // Sets default values
 ALMADefaultCharacter::ALMADefaultCharacter()
@@ -127,6 +124,7 @@ void ALMADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ALMADefaultCharacter::releaseSprint);
 
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, WeaponComponent, &ULMAWeaponComponent::Fire);
+	PlayerInputComponent->BindAction("Reload", IE_Pressed, WeaponComponent, &ULMAWeaponComponent::Reload);
 }
 
 void ALMADefaultCharacter::MoveForward(float Value)
@@ -176,6 +174,11 @@ void ALMADefaultCharacter::releaseSprint()
 {
 	pressSprintBtn = false;
 	sprintingStop();
+}
+
+bool ALMADefaultCharacter::isSprintingNow() const
+{
+	return bIsSprinting;
 }
 
 void ALMADefaultCharacter::sprintingStop()

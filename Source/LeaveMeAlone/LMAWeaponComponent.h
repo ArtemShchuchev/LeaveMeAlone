@@ -8,6 +8,7 @@
 
 class ALMABaseWeapon;
 class UAnimMontage;
+class ALMADefaultCharacter;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LEAVEMEALONE_API ULMAWeaponComponent : public UActorComponent
@@ -19,10 +20,14 @@ public:
 	ULMAWeaponComponent();
 
 	void Fire();
+	void Reload();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TSubclassOf<ALMABaseWeapon> WeaponClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	UAnimMontage* ReloadMontage;
 
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -34,6 +39,10 @@ public:
 private:
 	UPROPERTY()
 	ALMABaseWeapon* Weapon = nullptr;
+	bool AnimReloading = false;
 
 	void SpawnWeapon();
+	void InitAnimNotify();
+	void OnNotifyReloadFinished(USkeletalMeshComponent* SkeletalMesh);
+	bool CanReload() const;
 };

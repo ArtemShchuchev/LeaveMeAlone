@@ -4,7 +4,8 @@
 #include "LMAWeaponComponent.h"
 #include "GameFramework/Character.h"
 #include "LMABaseWeapon.h"
-//#include "Animations/LMAReloadFinishedAnimNotify.h"
+#include "Animations/LMAReloadFinishedAnimNotify.h"
+#include "LMADefaultCharacter.h"
 
 // Sets default values for this component's properties
 ULMAWeaponComponent::ULMAWeaponComponent()
@@ -18,10 +19,23 @@ ULMAWeaponComponent::ULMAWeaponComponent()
 
 void ULMAWeaponComponent::Fire()
 {
-	if (Weapon)
+	if (Weapon && !AnimReloading)
 	{
 		Weapon->Fire();
 	}
+}
+
+void ULMAWeaponComponent::Reload()
+{
+	auto ch = Cast<ALMADefaultCharacter>(GetOwner());
+	if (!CanReload() || ch->isSprintingNow())
+	{
+		return;
+	}
+	Weapon->ChangeClip();
+	AnimReloading = true;
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	Character->PlayAnimMontage(ReloadMontage);
 }
 
 
@@ -31,6 +45,7 @@ void ULMAWeaponComponent::BeginPlay()
 	Super::BeginPlay();
 
 	SpawnWeapon();
+	InitAnimNotify();
 }
 
 
@@ -38,8 +53,6 @@ void ULMAWeaponComponent::BeginPlay()
 void ULMAWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
 void ULMAWeaponComponent::SpawnWeapon()
@@ -54,5 +67,35 @@ void ULMAWeaponComponent::SpawnWeapon()
 			Weapon->AttachToComponent(Character->GetMesh(), AttachmentRules, "r_Weapon_Socket");
 		}
 	}
+}
+
+void ULMAWeaponComponent::InitAnimNotify()
+{
+	if (!ReloadMontage) return;
+
+	const auto &NotifiesEvents = ReloadMontage->Notifies;
+	for (auto &NotifyEvent : NotifiesEvents)
+	{
+		auto ReloadFinish = Cast<ULMAReloadFinishedAnimNotify>(NotifyEvent.Notify);
+		if (ReloadFinish)
+		{
+			ReloadFinish->OnNotifyReloadFinished.AddUObject(this, &ULMAWeaponComponent::OnNotifyReloadFinished);
+			break;
+		}
+	}
+}
+
+void ULMAWeaponComponent::OnNotifyReloadFinished(USkeletalMeshComponent* SkeletalMesh)
+{
+	const auto Character = Cast<ACharacter>(GetOwner());
+	if (Character->GetMesh() == SkeletalMesh)
+	{
+		AnimReloading = false;
+	}
+}
+
+bool ULMAWeaponComponent::CanReload() const
+{
+	return !AnimReloading;
 }
 

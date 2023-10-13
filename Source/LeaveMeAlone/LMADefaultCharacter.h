@@ -68,6 +68,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	bool isSprintingNow() const;
 
 private:
 	float YRotation = -75.0f;		// отвечает за поворот камеры по оси Y.
