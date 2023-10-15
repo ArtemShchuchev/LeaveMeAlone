@@ -6,20 +6,24 @@
 #include "GameFramework/Actor.h"
 #include "LMABaseWeapon.generated.h"
 
+class ALMADefaultCharacter;
+
 USTRUCT(BlueprintType)
 struct FAmmoWeapon
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	int32 Bullets;
+	int32 Bullets;	// патроны
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	int32 Clips;
+	int32 Clips;	// обоймы
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	bool Infinite;
+	bool Infinite;	// патроны бесконечные - true
 };
+
+DECLARE_DELEGATE(FBulletsEmptySignature);
 
 UCLASS()
 class LEAVEMEALONE_API ALMABaseWeapon : public AActor
@@ -30,9 +34,9 @@ public:
 	// Sets default values for this actor's properties
 	ALMABaseWeapon();
 
-	void Fire();
-	void FireEnd();
-	void ChangeClip();
+	void Fire(const bool onOff);
+	bool ChangeClip();
+	void ReloadFinished(const bool yesNo);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
@@ -42,20 +46,23 @@ protected:
 	float TraceDistance = 800.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
-	FAmmoWeapon AmmoWeapon{30, 0, true};
+	FAmmoWeapon AmmoWeapon{12, 3, false};
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	void Shoot();
-	void DecrementBullets();
-	bool IsCurrentClipEmpty() const;
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	FBulletsEmptySignature OnBulletsEmptyDelegate;
+
 private:
 	FAmmoWeapon CurrentAmmoWeapon;
 	FTimerHandle FTimerHandleFire;
+	bool isReloadClipsFinished;
+	
+	void Shoot();
+	void DecrementBullets();
+	bool CanIShoot() const;
 };

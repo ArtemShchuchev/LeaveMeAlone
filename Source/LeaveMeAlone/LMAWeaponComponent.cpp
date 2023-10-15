@@ -5,39 +5,38 @@
 #include "LMABaseWeapon.h"
 #include "Animations/LMAReloadFinishedAnimNotify.h"
 #include "LMADefaultCharacter.h"
+#include "LMABaseWeapon.h"
 
 // Sets default values for this component's properties
-ULMAWeaponComponent::ULMAWeaponComponent() : fireIsPressed(false)
+ULMAWeaponComponent::ULMAWeaponComponent() : isReloadingNow(false)
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false; // тик в любом случае НЕ работает!???
 }
 
 void ULMAWeaponComponent::Fire()
 {
-	fireIsPressed = true;
+	if (Weapon)
+		Weapon->Fire(true);
 }
 
 void ULMAWeaponComponent::FireEnd()
 {
-	fireIsPressed = false;
-	Weapon->FireEnd();
+	if (Weapon)
+		Weapon->Fire(false);
 }
 
 void ULMAWeaponComponent::Reload()
 {
-	auto ch = Cast<ALMADefaultCharacter>(GetOwner());
-	if (!CanReload() || ch->isSprintingNow())
+	if (CanReload())
 	{
-		return;
+		if (Weapon->ChangeClip())
+		{
+			isReloadingNow = true;
+			ACharacter* Character = Cast<ACharacter>(GetOwner());
+			Character->PlayAnimMontage(ReloadMontage);
+		}
 	}
-	Weapon->ChangeClip();
-	AnimReloading = true;
-	ACharacter* Character = Cast<ACharacter>(GetOwner());
-	Character->PlayAnimMontage(ReloadMontage);
 }
-
 
 // Called when the game starts
 void ULMAWeaponComponent::BeginPlay()
@@ -53,18 +52,6 @@ void ULMAWeaponComponent::BeginPlay()
 void ULMAWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	if (fireIsPressed)
-	{
-		if (Weapon && !AnimReloading)
-		{
-			Weapon->Fire();
-		}
-		else
-		{
-			Weapon->FireEnd();
-		}
-	}
 }
 
 void ULMAWeaponComponent::SpawnWeapon()
@@ -77,6 +64,7 @@ void ULMAWeaponComponent::SpawnWeapon()
 		{
 			FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
 			Weapon->AttachToComponent(Character->GetMesh(), AttachmentRules, "r_Weapon_Socket");
+			Weapon->OnBulletsEmptyDelegate.BindLambda([this]() { Reload(); });
 		}
 	}
 }
@@ -102,12 +90,13 @@ void ULMAWeaponComponent::OnNotifyReloadFinished(USkeletalMeshComponent* Skeleta
 	const auto Character = Cast<ACharacter>(GetOwner());
 	if (Character->GetMesh() == SkeletalMesh)
 	{
-		AnimReloading = false;
+		isReloadingNow = false;
+		Weapon->ReloadFinished(true);
 	}
 }
 
-bool ULMAWeaponComponent::CanReload() const
+bool ULMAWeaponComponent::CanReload()
 {
-	return !AnimReloading;
+	auto ch = Cast<ALMADefaultCharacter>(GetOwner());
+	return (!isReloadingNow && !ch->isSprintingNow() && Weapon);
 }
-

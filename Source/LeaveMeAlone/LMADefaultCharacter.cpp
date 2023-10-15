@@ -110,13 +110,6 @@ void ALMADefaultCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	/*
-		Для корректного бинда на созданные нами функции используетс¤ функци¤ BindAxis,
-		котора¤ в качестве первого аргумента принимает названи¤ событи¤, которое мы
-		объ¤вл¤ли в Project Settings > Engine > Input.
-		Второй аргумент - это объект в котором будет вызвано событие.
-		Третий - это ссылка на функцию, которая вызываетс¤ при получении данных с клавиатуры.
-	*/
 	PlayerInputComponent->BindAxis("MoveForward", this, &ALMADefaultCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ALMADefaultCharacter::MoveRight);
 	

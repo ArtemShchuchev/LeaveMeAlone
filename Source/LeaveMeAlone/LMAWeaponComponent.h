@@ -40,11 +40,11 @@ public:
 private:
 	UPROPERTY()
 	ALMABaseWeapon* Weapon = nullptr;
-	bool AnimReloading = false;
-	bool fireIsPressed;
+	
+	bool isReloadingNow;
 
 	void SpawnWeapon();
 	void InitAnimNotify();
 	void OnNotifyReloadFinished(USkeletalMeshComponent* SkeletalMesh);
-	bool CanReload() const;
+	bool CanReload();
 };

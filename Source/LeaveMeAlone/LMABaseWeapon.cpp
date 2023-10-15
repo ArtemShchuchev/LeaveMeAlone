@@ -1,11 +1,12 @@
 // LeaveMeAlone Game by Netologiya. All RightsReserved.
 
 #include "LMABaseWeapon.h"
+#include "LMADefaultCharacter.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeapon, All, All);
 
 // Sets default values
-ALMABaseWeapon::ALMABaseWeapon() : CurrentAmmoWeapon(AmmoWeapon)
+ALMABaseWeapon::ALMABaseWeapon() : CurrentAmmoWeapon(AmmoWeapon), isReloadClipsFinished(true)
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -14,37 +15,55 @@ ALMABaseWeapon::ALMABaseWeapon() : CurrentAmmoWeapon(AmmoWeapon)
 	SetRootComponent(WeaponComponent);
 }
 
-void ALMABaseWeapon::Fire()
+void ALMABaseWeapon::Fire(const bool onOff)
 {
-	GetWorld()->GetTimerManager().SetTimer(FTimerHandleFire, // handle to cancel timer at a later time
-		this,												 // the owning object
-		&ALMABaseWeapon::Shoot,								 // function to call on elapsed
-		0.2,												 // float delay until elapsed
-		true);												 // looping?
-}
-
-void ALMABaseWeapon::FireEnd()
-{
-	if (FTimerHandleFire.IsValid())
+	if (onOff)
 	{
-		GetWorld()->GetTimerManager().ClearTimer(FTimerHandleFire);
+		Shoot();
+
+		GetWorld()->GetTimerManager().SetTimer(FTimerHandleFire, // handle to cancel timer at a later time
+			this,												 // the owning object
+			&ALMABaseWeapon::Shoot,								 // function to call on elapsed
+			0.2,												 // float delay until elapsed
+			true);												 // looping?
 	}
+	else GetWorld()->GetTimerManager().ClearTimer(FTimerHandleFire);
 }
 
-void ALMABaseWeapon::ChangeClip()
+bool ALMABaseWeapon::ChangeClip()
 {
+	if (CurrentAmmoWeapon.Bullets == AmmoWeapon.Bullets)
+		return false;	// полная обойма патронов
+
+
+	if (CurrentAmmoWeapon.Infinite == false)	// не бесконечные патроны
+	{
+		if (CurrentAmmoWeapon.Clips <= 0)
+			return false;
+
+		--CurrentAmmoWeapon.Clips;
+	}
+
 	CurrentAmmoWeapon.Bullets = AmmoWeapon.Bullets;
+	ReloadFinished(false);
+	return true;
+}
+
+void ALMABaseWeapon::ReloadFinished(const bool yesNo)
+{
+	isReloadClipsFinished = yesNo;
 }
 
 // Called when the game starts or when spawned
 void ALMABaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ALMABaseWeapon::Shoot()
 {
+	if ( !CanIShoot() ) return;
+
 	const FTransform SocketTransform = WeaponComponent->GetSocketTransform("Muzzle");
 	const FVector TraceStart = SocketTransform.GetLocation();
 	const FVector ShootDirection = SocketTransform.GetRotation().GetForwardVector();
@@ -58,13 +77,7 @@ void ALMABaseWeapon::Shoot()
 	{
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 0.5f);
 	}
-	/*
-		Кроме того, в рамках домашнего задания, которое
-		вас ожидает, необходимо будет дополнить
-		функцию Shoot дополнительным условием выхода
-		из функции, в том случае, если патроны закончатся
-		в процессе стрельбы.
-	*/
+
 	DecrementBullets();
 }
 
@@ -72,22 +85,20 @@ void ALMABaseWeapon::DecrementBullets()
 {
 	CurrentAmmoWeapon.Bullets--;
 	UE_LOG(LogWeapon, Display, TEXT("Bullets = %s"), *FString::FromInt(CurrentAmmoWeapon.Bullets));
-
-	if (IsCurrentClipEmpty())
-	{
-		ChangeClip();
-	}
+	if (CurrentAmmoWeapon.Bullets == 0) OnBulletsEmptyDelegate.Execute();
 }
 
-bool ALMABaseWeapon::IsCurrentClipEmpty() const
+bool ALMABaseWeapon::CanIShoot() const
 {
-	return CurrentAmmoWeapon.Bullets == 0;
+	auto character = Cast<ALMADefaultCharacter>(this->GetSceneOutlinerParent());
+
+	return (CurrentAmmoWeapon.Bullets > 0
+		&& isReloadClipsFinished
+		&& !character->isSprintingNow());
 }
 
 // Called every frame
 void ALMABaseWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
-
