@@ -37,6 +37,7 @@ public:
 	void Fire(const bool onOff);
 	bool ChangeClip();
 	void ReloadFinished(const bool yesNo);
+	FAmmoWeapon GetCurrentAmmoWeapon() const;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")

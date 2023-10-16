@@ -3,8 +3,6 @@
 #include "LMABaseWeapon.h"
 #include "LMADefaultCharacter.h"
 
-DEFINE_LOG_CATEGORY_STATIC(LogWeapon, All, All);
-
 // Sets default values
 ALMABaseWeapon::ALMABaseWeapon() : CurrentAmmoWeapon(AmmoWeapon), isReloadClipsFinished(true)
 {
@@ -44,7 +42,6 @@ bool ALMABaseWeapon::ChangeClip()
 		--CurrentAmmoWeapon.Clips;
 	}
 
-	CurrentAmmoWeapon.Bullets = AmmoWeapon.Bullets;
 	ReloadFinished(false);
 	return true;
 }
@@ -52,6 +49,12 @@ bool ALMABaseWeapon::ChangeClip()
 void ALMABaseWeapon::ReloadFinished(const bool yesNo)
 {
 	isReloadClipsFinished = yesNo;
+	if (isReloadClipsFinished) CurrentAmmoWeapon.Bullets = AmmoWeapon.Bullets;
+}
+
+FAmmoWeapon ALMABaseWeapon::GetCurrentAmmoWeapon() const
+{
+	return CurrentAmmoWeapon;
 }
 
 // Called when the game starts or when spawned
@@ -84,7 +87,6 @@ void ALMABaseWeapon::Shoot()
 void ALMABaseWeapon::DecrementBullets()
 {
 	CurrentAmmoWeapon.Bullets--;
-	UE_LOG(LogWeapon, Display, TEXT("Bullets = %s"), *FString::FromInt(CurrentAmmoWeapon.Bullets));
 	if (CurrentAmmoWeapon.Bullets == 0) OnBulletsEmptyDelegate.Execute();
 }
 
@@ -94,6 +96,7 @@ bool ALMABaseWeapon::CanIShoot() const
 
 	return (CurrentAmmoWeapon.Bullets > 0
 		&& isReloadClipsFinished
+		&& IsValid(character)
 		&& !character->isSprintingNow());
 }
 

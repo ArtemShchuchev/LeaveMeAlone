@@ -8,7 +8,6 @@
 
 // Декларируем делегат оповещающий о смерти
 DECLARE_MULTICAST_DELEGATE(FOnDeath)
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class LEAVEMEALONE_API ULMAHealthComponent : public UActorComponent
@@ -31,7 +30,6 @@ public:
 
 	
 	FOnDeath OnDeath;	// объявляю делегат
-	FOnHealthChanged OnHealthChanged;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)

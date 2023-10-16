@@ -64,12 +64,8 @@ void ALMADefaultCharacter::BeginPlay()
 	{
 		CurrentCursor = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), CursorMaterial, CursorSize, FVector(0));
 	}
-	
-	//OnHealthChanged(HealthComponent->GetHealth());
+
 	HealthComponent->OnDeath.AddUObject(this, &ALMADefaultCharacter::OnDeath);
-	//HealthComponent->OnHealthChanged.AddUObject(this, &ALMADefaultCharacter::OnHealthChanged);
-	
-	//OnStaminaChanged();
 }
 
 // Called every frame
@@ -152,12 +148,6 @@ void ALMADefaultCharacter::OnDeath()
 		GetWorld()->GetTimerManager().ClearTimer(FTimerHandleStamina);
 	}
 }
-/*
-void ALMADefaultCharacter::OnHealthChanged(float NewHealth)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FString::Printf(TEXT("Health = %f"), NewHealth), true, {2, 2});
-}
-*/
 
 void ALMADefaultCharacter::pushSprint()
 {
@@ -198,8 +188,6 @@ void ALMADefaultCharacter::countDownStamina()
 	{
 		sprintingStop();
 	}
-
-	//OnStaminaChanged();
 }
 
 void ALMADefaultCharacter::countUpStamina()
@@ -212,15 +200,7 @@ void ALMADefaultCharacter::countUpStamina()
 		stamina = STAMINA_MAX;
 		GetWorld()->GetTimerManager().ClearTimer(FTimerHandleStamina);
 	}
-
-	//OnStaminaChanged();
 }
-/*
-void ALMADefaultCharacter::OnStaminaChanged()
-{
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Blue, FString::Printf(TEXT("Stamina = %f"), stamina), true, {2, 2});
-}
-*/
 
 void ALMADefaultCharacter::RotationPlayerOnCursor()
 {

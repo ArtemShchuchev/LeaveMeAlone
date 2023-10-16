@@ -5,7 +5,6 @@
 #include "LMABaseWeapon.h"
 #include "Animations/LMAReloadFinishedAnimNotify.h"
 #include "LMADefaultCharacter.h"
-#include "LMABaseWeapon.h"
 
 // Sets default values for this component's properties
 ULMAWeaponComponent::ULMAWeaponComponent() : isReloadingNow(false)
@@ -15,13 +14,13 @@ ULMAWeaponComponent::ULMAWeaponComponent() : isReloadingNow(false)
 
 void ULMAWeaponComponent::Fire()
 {
-	if (Weapon)
+	if (IsValid(Weapon))
 		Weapon->Fire(true);
 }
 
 void ULMAWeaponComponent::FireEnd()
 {
-	if (Weapon)
+	if (IsValid(Weapon))
 		Weapon->Fire(false);
 }
 
@@ -36,6 +35,16 @@ void ULMAWeaponComponent::Reload()
 			Character->PlayAnimMontage(ReloadMontage);
 		}
 	}
+}
+
+bool ULMAWeaponComponent::GetCurrentWeaponAmmo(FAmmoWeapon& AmmoWeapon) const
+{
+	if (IsValid(Weapon))
+	{
+		AmmoWeapon = Weapon->GetCurrentAmmoWeapon();
+		return true;
+	}
+	return false;
 }
 
 // Called when the game starts
@@ -57,10 +66,10 @@ void ULMAWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 void ULMAWeaponComponent::SpawnWeapon()
 {
 	Weapon = GetWorld()->SpawnActor<ALMABaseWeapon>(WeaponClass);
-	if (Weapon)
+	if (IsValid(Weapon))
 	{
 		const auto Character = Cast<ACharacter>(GetOwner());
-		if (Character)
+		if (IsValid(Character))
 		{
 			FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
 			Weapon->AttachToComponent(Character->GetMesh(), AttachmentRules, "r_Weapon_Socket");
@@ -98,5 +107,6 @@ void ULMAWeaponComponent::OnNotifyReloadFinished(USkeletalMeshComponent* Skeleta
 bool ULMAWeaponComponent::CanReload()
 {
 	auto ch = Cast<ALMADefaultCharacter>(GetOwner());
-	return (!isReloadingNow && !ch->isSprintingNow() && Weapon);
+	
+	return (IsValid(Weapon) && IsValid(ch) && !ch->isSprintingNow() && !isReloadingNow);
 }

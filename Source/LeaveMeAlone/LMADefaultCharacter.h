@@ -72,7 +72,7 @@ public:
 
 private:
 	float YRotation = -75.0f;		// отвечает за поворот камеры по оси Y.
-	float ArmLength = 1400.0f;		// отвечает за длину штатива.
+	float ArmLength = 1800.0f;		// отвечает за длину штатива.
 	float FOV = 55.0f;				// отвечает за поле зрения камеры.
 	
 	/* Спринт и Выносливость */
@@ -86,14 +86,12 @@ private:
 	void releaseSprint();
 	void countDownStamina();
 	void countUpStamina();
-	//void OnStaminaChanged();		// отображение выносливости
 	/* End: Спринт и Выносливость */
 
 	void MoveForward(float Value);	// движение персонажа по оси X
 	void MoveRight(float Value);	// движение персонажа по оси Y
 	
 	void OnDeath();
-	//void OnHealthChanged(float NewHealth);
 
 	void RotationPlayerOnCursor();
 

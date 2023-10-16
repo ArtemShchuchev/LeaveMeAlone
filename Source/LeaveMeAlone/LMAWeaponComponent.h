@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "LMABaseWeapon.h"
 #include "LMAWeaponComponent.generated.h"
 
-class ALMABaseWeapon;
 class UAnimMontage;
 class ALMADefaultCharacter;
 
@@ -20,8 +20,13 @@ public:
 	ULMAWeaponComponent();
 
 	void Fire();
-	void FireEnd();
 	void Reload();
+
+	UFUNCTION(BlueprintCallable)
+	void FireEnd();
+
+	UFUNCTION(BlueprintCallable)
+	bool GetCurrentWeaponAmmo(FAmmoWeapon& AmmoWeapon) const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
