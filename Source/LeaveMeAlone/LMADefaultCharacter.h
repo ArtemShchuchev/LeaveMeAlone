@@ -17,6 +17,8 @@ class ULMAHealthComponent;	// здоровье
 class UAnimMontage;	// класс анимационного монтажа
 class ULMAWeaponComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPersonIsDeath);
+
 UCLASS()
 class LEAVEMEALONE_API ALMADefaultCharacter : public ACharacter
 {
@@ -28,6 +30,9 @@ public:
 	
 	UFUNCTION()
 	ULMAHealthComponent* GetHealthComponent() const { return HealthComponent; }
+
+	UPROPERTY(BlueprintAssignable)
+	FPersonIsDeath PersonIsDeath;
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")

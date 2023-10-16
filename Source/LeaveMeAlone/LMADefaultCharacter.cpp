@@ -147,6 +147,8 @@ void ALMADefaultCharacter::OnDeath()
 		bIsSprinting = false;
 		GetWorld()->GetTimerManager().ClearTimer(FTimerHandleStamina);
 	}
+
+	PersonIsDeath.Broadcast();
 }
 
 void ALMADefaultCharacter::pushSprint()
@@ -205,7 +207,7 @@ void ALMADefaultCharacter::countUpStamina()
 void ALMADefaultCharacter::RotationPlayerOnCursor()
 {
 	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (PC)
+	if (IsValid(PC))
 	{
 		FHitResult ResultHit;
 		PC->GetHitResultUnderCursor(ECC_GameTraceChannel1, true, ResultHit);

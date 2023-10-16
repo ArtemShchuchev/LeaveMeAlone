@@ -28,7 +28,6 @@ public:
 	bool AddHealth(float NewHealth);
 	bool IsHealthFull() const;
 
-	
 	FOnDeath OnDeath;	// объявляю делегат
 
 protected:
